@@ -23,7 +23,7 @@ jobs:
 
       - name: Install script dependencies
         working-directory: ./.github/scripts
-        run: npm Install  
+        run: npm install  
 
       - name: Run script
         shell: bash
