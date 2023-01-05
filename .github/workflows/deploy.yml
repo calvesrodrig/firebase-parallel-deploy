@@ -27,7 +27,6 @@ jobs:
         working-directory: ./.github/scripts
         run: |
           FUNCTIONS=$(node getFunctions.js ${BODY})
-          echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
       
       - name: Print functions
         run: echo ${FUNCTIONS}
