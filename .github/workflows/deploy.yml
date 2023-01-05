@@ -1,0 +1,22 @@
+name: deploy functions in parallel
+
+on:
+  pull_request:
+    branches: [develop]
+
+env:
+  BRANCH: ${{ github.event.pull_request.head.ref }}
+  BODY: ${{ github.event.pull_request.body }}
+  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  
+jobs:
+  get_functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate file from PR message
+        shell: bash
+        run: |
+          IFS=/ read context branch_name <<< ${BRANCH}
+          echo ${BODY} > $branch_name
+          echo ${BODY}
