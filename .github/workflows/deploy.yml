@@ -22,7 +22,7 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          FUNCTIONS=$(node getFunctions.js ${BODY})
+          FUNCTIONS='$(node getFunctions.js ${BODY})'
           echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
 
       - name: Remove branch invalid char

@@ -1,7 +1,6 @@
 
     const functions = process.argv.slice(2)
     const formattedFunctions = functions.map(name => name.replace('\r', ''))
-    console.log(formattedFunctions, JSON.stringify(formattedFunctions))
     return `'${JSON.stringify(formattedFunctions)}'`
 
 // const writeJSONFile = async () => {
