@@ -31,4 +31,5 @@ jobs:
         run: node getFunctions.js ${BRANCH} ${BODY}
 
       - name: Check folder
+        shell: bash
         run: ls
