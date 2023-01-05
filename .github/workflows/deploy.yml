@@ -2,7 +2,7 @@ name: deploy functions in parallel
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [master]
 
 env:
   BRANCH: ${{ github.event.pull_request.head.ref }}
