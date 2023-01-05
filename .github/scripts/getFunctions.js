@@ -30,7 +30,7 @@ const writeJSONFile = () => {
 const updateFunctions = async () => {
     const artifactClient = artifact.create()
     const artifactName = `Artifact-functions-${branch}`;
-    const files = [`${fileName}`]
+    const files = [`${__dirname}/${fileName}`]
     const rootDirectory = `${__dirname}`
     const options = {
         continueOnError: false
@@ -41,7 +41,7 @@ const updateFunctions = async () => {
 
 const run = async () => {
     writeJSONFile()
-    // await updateFunctions()
+    await updateFunctions()
 }
 
 run()
