@@ -7,8 +7,6 @@ on:
 env:
   BRANCH: ${{ github.event.pull_request.head.ref }}
   BODY: ${{ github.event.pull_request.body }}
-  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
-  FUNCTIONS: '[]'
   
 jobs:
   get_functions:
@@ -24,10 +22,10 @@ jobs:
           # echo ${BODY}
 
         
-      #  Trocar o valor de uma variável de ambiente
       - name: Change env variable
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          echo "::set-env name=FUNCTIONS::$(node getFunctions.js ${BODY})"
+          FUNCTIONS=$(node getFunctions.js ${BODY})
+          echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
           echo ${FUNCTIONS}
