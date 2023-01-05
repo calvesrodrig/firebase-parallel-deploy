@@ -41,7 +41,7 @@ const updateFunctions = async () => {
 
 const run = async () => {
     writeJSONFile()
-    await updateFunctions()
+    // await updateFunctions()
 }
 
 run()

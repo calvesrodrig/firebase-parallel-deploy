@@ -29,3 +29,6 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         run: node getFunctions.js ${BRANCH} ${BODY}
+
+      - name: Check folder
+        run: ls
