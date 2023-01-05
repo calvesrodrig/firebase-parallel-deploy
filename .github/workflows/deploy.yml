@@ -29,5 +29,5 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          ${{ env.FUNCTIONS }} > functions-${BRANCH}.json
+          echo ${{ env.FUNCTIONS }} > functions-${BRANCH}.json
           cat functions-${BRANCH}.json
