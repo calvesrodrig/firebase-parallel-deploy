@@ -11,6 +11,7 @@ const getFunctions = () => {
 
 const writeJSONFile = async () => {
     const content = getFunctions()
+    console.log(branch, content)
     fs.access('./', fs.constants.F_OK, async (err) => {
         if (err) {
             console.error(err);
