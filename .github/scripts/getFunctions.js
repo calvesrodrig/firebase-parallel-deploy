@@ -9,9 +9,9 @@ const getFunctions = () => {
     return JSON.stringify(formattedFunctions)
 }
 
-const writeJSONFile = () => {
+const writeJSONFile = async () => {
     const content = getFunctions()
-    fs.access('./', fs.constants.F_OK, (err) => {
+    fs.access('./', fs.constants.F_OK, async (err) => {
         if (err) {
             console.error(err);
             process.exit(1);
@@ -20,6 +20,7 @@ const writeJSONFile = () => {
         try {
             fs.writeFileSync(`./${fileName}`, content);
             console.log('Created successfully in', process.cwd());
+            await updateFunctions()
         } catch (error) {
             console.error(error);
             process.exit(1);
@@ -40,8 +41,7 @@ const updateFunctions = async () => {
 }
 
 const run = async () => {
-    writeJSONFile()
-    await updateFunctions()
+    await writeJSONFile()
 }
 
 run()
