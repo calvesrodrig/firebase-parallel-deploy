@@ -25,14 +25,20 @@ jobs:
           FUNCTIONS=$(node getFunctions.js ${BODY})
           echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
 
+      - name: Remove branch invalid char
+        shell: bash
+        run: |
+          RENAMED_BRANCH="${BRANCH////$'-'}"
+          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+
       - name: Write file
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          echo ${{ env.FUNCTIONS }} > functions-"${BRANCH////$'-'}".json
+          echo ${{ env.FUNCTIONS }} > functions-${{ env.RENAMED_BRANCH }}.json
 
       - name: Upload file artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Artifact-functions-"${BRANCH////$'-'}"
-          path: ./.github/scripts/functions-"${BRANCH////$'-'}".json
+          name: Artifact-functions-${{ env.RENAMED_BRANCH }}
+          path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
