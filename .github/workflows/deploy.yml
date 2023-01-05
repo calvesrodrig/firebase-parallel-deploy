@@ -22,12 +22,13 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          FUNCTIONS=$(node getFunctions.js ${BRANCH} ${BODY})
+          FUNCTIONS=$(node getFunctions.js ${BODY})
           echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
 
-      - name: Check folder
+      - name: Write file
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          echo ${{ env.FUNCTIONS }} > functions-${BRANCH}.json
-          cat functions-${BRANCH}.json
+          echo ${{ env.FUNCTIONS }} > functions-"${BRANCH////$'-'}".json
+          ls -la
+          cat functions-"${BRANCH////$'-'}".json

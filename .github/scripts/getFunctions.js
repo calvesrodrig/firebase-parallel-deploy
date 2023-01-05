@@ -1,13 +1,7 @@
-const artifact = require('@actions/artifact');
-const fs = require('fs')
-const branch = process.argv.slice(2).shift().replace(/([\\*/|":<>*?])/g, '-')
-const fileName = `functions-${branch}.json`
 
-const getFunctions = () => {
-    const functions = process.argv.slice(3)
+    const functions = process.argv.slice(2)
     const formattedFunctions = functions.map(name => name.replace('\r', ''))
     return JSON.stringify(formattedFunctions)
-}
 
 // const writeJSONFile = async () => {
 //     const content = getFunctions()
@@ -44,5 +38,3 @@ const getFunctions = () => {
 // const run = async () => {
 //     await writeJSONFile()
 // }
-
-getFunctions()
