@@ -25,6 +25,9 @@ jobs:
         working-directory: ./.github/scripts
         run: npm install  
 
+      - name: Print ACTIONS_RUNTIME_TOKEN
+        run: echo ${{ env.ACTIONS_RUNTIME_TOKEN }}
+
       - name: Run script
         shell: bash
         working-directory: ./.github/scripts
