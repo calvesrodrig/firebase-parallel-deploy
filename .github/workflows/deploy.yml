@@ -8,21 +8,26 @@ env:
   BRANCH: ${{ github.event.pull_request.head.ref }}
   BODY: ${{ github.event.pull_request.body }}
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  FUNCTIONS: '[]'
   
 jobs:
   get_functions:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Generate file from PR message
-        shell: bash
-        working-directory: ./.github/scripts
-        run: node getFunctions.js ${BODY}
+      # - name: Generate file from PR message
+      #   shell: bash
+      #   working-directory: ./.github/scripts
+      #   run: node getFunctions.js ${BODY}
           # IFS=/ read context branch_name <<< ${BRANCH}
           # echo ${BODY} > $branch_name
           # echo ${BODY}
 
         
       #  Trocar o valor de uma variável de ambiente
-      # - name: Change env variable
-      #   run: echo "::set-env name=TEST_RESULT::failure"
+      - name: Change env variable
+        shell: bash
+        working-directory: ./.github/scripts
+        run: |
+          echo "::set-env name=FUNCTIONS::$(node getFunctions.js ${BODY})"
+          echo ${FUNCTIONS}
