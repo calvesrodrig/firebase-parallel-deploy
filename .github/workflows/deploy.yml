@@ -18,17 +18,16 @@ jobs:
         working-directory: ./.github/scripts
         run: npm install  
 
-      - name: Print ACTIONS_RUNTIME_TOKEN
-        run: echo ${{ env.ACTIONS_RUNTIME_TOKEN }}
-
       - name: Run script
         shell: bash
         working-directory: ./.github/scripts
-        env:
-          ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node getFunctions.js ${BRANCH} ${BODY}
+        run: |
+          FUNCTIONS=$(node getFunctions.js ${BRANCH} ${BODY})
+          echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
 
       - name: Check folder
         shell: bash
         working-directory: ./.github/scripts
-        run: ls -la
+        run: |
+          ${{ env.FUNCTIONS }} > functions-${BRANCH}.json
+          cat functions-${BRANCH}.json
