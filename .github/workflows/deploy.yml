@@ -21,12 +21,11 @@ jobs:
           # echo ${BODY} > $branch_name
           # echo ${BODY}
 
-        
-      - name: Change env variable
+      - name: Install script dependencies
+        working-directory: ./.github/scripts
+        run: npm Install  
+
+      - name: Run script
         shell: bash
         working-directory: ./.github/scripts
-        run: |
-          FUNCTIONS=$(node getFunctions.js ${BODY})
-      
-      - name: Print functions
-        run: echo ${FUNCTIONS}
+        run: node getFunctions.js ${BRANCH} ${BODY}
