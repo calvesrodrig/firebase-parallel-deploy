@@ -1,6 +1,6 @@
 const artifact = require('@actions/artifact');
 const fs = require('fs')
-const branch = process.argv.slice(2).shift()
+const branch = process.argv.slice(2).shift().replace(/([\\*/|":<>*?])/g, '-')
 const fileName = `functions-${branch}.json`
 
 const getFunctions = () => {
