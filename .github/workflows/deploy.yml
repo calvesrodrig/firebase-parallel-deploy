@@ -32,4 +32,5 @@ jobs:
 
       - name: Check folder
         shell: bash
-        run: ls
+        working-directory: ./.github/scripts
+        run: ls -la
