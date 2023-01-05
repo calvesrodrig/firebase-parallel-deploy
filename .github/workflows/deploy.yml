@@ -30,5 +30,9 @@ jobs:
         working-directory: ./.github/scripts
         run: |
           echo ${{ env.FUNCTIONS }} > functions-"${BRANCH////$'-'}".json
-          ls -la
-          cat functions-"${BRANCH////$'-'}".json
+
+      - name: Upload file artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifact-functions-"${BRANCH////$'-'}"
+          path: ./.github/scripts/functions-"${BRANCH////$'-'}".json
