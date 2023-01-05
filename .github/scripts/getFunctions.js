@@ -31,7 +31,7 @@ const updateFunctions = async () => {
     const artifactClient = artifact.create()
     const artifactName = `Artifact-functions-${branch}`;
     const files = [`${fileName}`]
-    const rootDirectory = '.'
+    const rootDirectory = `${__dirname}/.github/scripts`
     const options = {
         continueOnError: false
     }
