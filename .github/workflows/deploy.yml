@@ -16,7 +16,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Generate file from PR message
         shell: bash
-        run: |
-          IFS=/ read context branch_name <<< ${BRANCH}
-          echo ${BODY} > $branch_name
-          echo ${BODY}
+        working-directory: ./.github/scripts
+        run: node getFunctions.js ${BODY}
+          # IFS=/ read context branch_name <<< ${BRANCH}
+          # echo ${BODY} > $branch_name
+          # echo ${BODY}
+
+        
+      #  Trocar o valor de uma variável de ambiente
+      # - name: Change env variable
+      #   run: echo "::set-env name=TEST_RESULT::failure"
