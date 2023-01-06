@@ -1,0 +1,27 @@
+
+name: Deploy to Prod
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  FUNCTIONS_PATH: deploy-functions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create functions folder
+        run: mkdir ${FUNCTIONS_PATH}
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ${FUNCTIONS_PATH}
+
+      - name: Check folder
+        shell: bash
+        run: cd ${FUNCTIONS_PATH} && ls -la
