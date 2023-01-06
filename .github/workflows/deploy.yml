@@ -34,3 +34,4 @@ jobs:
         with:
           name: Artifact-functions-${{ env.RENAMED_BRANCH }}
           path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
+          retention-days: 15
