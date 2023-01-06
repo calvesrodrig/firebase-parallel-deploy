@@ -2,21 +2,36 @@ name: deploy functions in parallel
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [master]
 
 env:
   BRANCH: ${{ github.event.pull_request.head.ref }}
   BODY: ${{ github.event.pull_request.body }}
-  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
   
 jobs:
   get_functions:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Generate file from PR message
+
+      - name: Install script dependencies
+        working-directory: ./.github/scripts
+        run: npm install
+
+      - name: Remove branch invalid char
         shell: bash
         run: |
-          IFS=/ read context branch_name <<< ${BRANCH}
-          echo ${BODY} > $branch_name
-          echo ${BODY}
+          RENAMED_BRANCH="${BRANCH////$'-'}"
+          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+          
+      - name: Run script
+        shell: bash
+        working-directory: ./.github/scripts
+        run: node getFunctions.js ${{ env.RENAMED_BRANCH }} ${BODY}
+
+      - name: Upload file artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifact-functions-${{ env.RENAMED_BRANCH }}
+          path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
+          retention-days: 15
