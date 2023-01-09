@@ -1,16 +1,12 @@
 
-name: Deploy to Prod
-
-# on:
-#   workflow_dispatch:
-#   pull_request:
-#     branches:
-#       - master
-#     types: [closed]
+name: Deploy
 
 on:
+  workflow_dispatch:
   pull_request:
-    branches: [master]
+    branches:
+      - master
+    types: [closed]
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
@@ -18,7 +14,7 @@ env:
   FUNCTIONS_PATH: deploy-functions
 
 jobs:
-  deploy:
+  get_functions:
     runs-on: ubuntu-latest
     outputs:
       functions: ${{ steps.get-functions.outputs.functions }}
@@ -65,10 +61,10 @@ jobs:
 
   example_matrix:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [get_functions]
     strategy:
       matrix:
-        function: ${{ fromJson(needs.deploy.outputs.functions) }}
+        function: ${{ fromJson(needs.get_functions.outputs.functions) }}
     steps:
       - name: Print
         run: echo ${{ matrix.function }}
