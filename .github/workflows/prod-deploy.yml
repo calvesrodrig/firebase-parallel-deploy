@@ -56,5 +56,4 @@ jobs:
           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
 
       - name: Check file
-        working-directory: ./.github/scripts/${FUNCTIONS_PATH}
-        run: cat functions-${{ env.RENAMED_BRANCH }}.json
+        run: cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json
