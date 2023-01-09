@@ -1,4 +1,4 @@
-name: deploy functions in parallel
+name: get functions and save in artifacts
 
 on:
   pull_request:

@@ -22,6 +22,9 @@ const getArtifacts = async () => {
         writeFile('./', './artifact.zip', buffer)
     } catch(error) {
         console.error(error)
+        console.error('branch: ', process.env.BRANCH)
+        console.error('owner: ', owner)
+        console.error('repo: ', repo)
     }
 }
 
