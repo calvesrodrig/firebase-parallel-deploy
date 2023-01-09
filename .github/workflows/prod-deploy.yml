@@ -69,4 +69,4 @@ jobs:
         functions: ["function1", "function2"]
     steps:
       - name: Print
-        run: echo "works"
+        run: echo ${{ strategy }}
