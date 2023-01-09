@@ -66,7 +66,7 @@ jobs:
     needs: [deploy]
     strategy:
       matrix:
-        functions: ["function1", "function2"]
+        function: ["function1", "function2"]
     steps:
       - name: Print
-        run: echo ${{ strategy }}
+        run: echo ${{ matrix.function }}
