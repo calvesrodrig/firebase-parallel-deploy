@@ -1,12 +1,16 @@
 
 name: Deploy to Prod
 
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     branches:
+#       - master
+#     types: [closed]
+
 on:
-  workflow_dispatch:
   pull_request:
-    branches:
-      - master
-    types: [closed]
+    branches: [master]
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
@@ -37,7 +41,7 @@ jobs:
           BRANCH: ${BRANCH}
           REPOSITORY: ${{ github.repository }}
           FUNCTIONS_PATH: ${FUNCTIONS_PATH}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: node getArtifacts.js
 
       - name: Check folder
