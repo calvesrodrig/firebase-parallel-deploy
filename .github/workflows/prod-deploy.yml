@@ -55,5 +55,16 @@ jobs:
           RENAMED_BRANCH="${BRANCH////$'-'}"
           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
 
-      - name: Check file
-        run: cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json
+      - name: Add functions array to env
+        run: |
+          FUNCTIONS=$(cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json)
+          echo "FUNCTIONS=$FUNCTIONS" >> $GITHUB_ENV
+
+  example_matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        containers: ${{ env.FUNCTIONS }}
+    steps:
+      - name: Print
+        run: echo "works"
