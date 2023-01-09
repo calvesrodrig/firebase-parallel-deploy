@@ -38,9 +38,9 @@ jobs:
       - name: Download artifact
         working-directory: ./.github/scripts
         env:
-          BRANCH: ${BRANCH}
+          BRANCH: ${{ env.BRANCH }}
           REPOSITORY: ${{ github.repository }}
-          FUNCTIONS_PATH: ${FUNCTIONS_PATH}
+          FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
           TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: node getArtifacts.js
 
