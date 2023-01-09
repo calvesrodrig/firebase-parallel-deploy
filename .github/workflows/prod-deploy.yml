@@ -3,9 +3,14 @@ name: Deploy to Prod
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  BRANCH: ${{ github.event.pull_request.head.ref }}
   FUNCTIONS_PATH: deploy-functions
 
 jobs:
@@ -14,14 +19,34 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: echo branch
+        shell: bash
+        run: echo ${BRANCH}
+
       - name: Create functions folder
+        working-directory: ./.github/scripts
         run: mkdir ${FUNCTIONS_PATH}
 
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: ${FUNCTIONS_PATH}
+      - name: Download artifact
+        working-directory: ./.github/scripts
+        env:
+          BRANCH: ${BRANCH}
+          REPOSITORY: ${{ github.repository }}
+          FUNCTIONS_PATH: ${FUNCTIONS_PATH}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node getArtifacts.js
 
       - name: Check folder
         shell: bash
-        run: cd ${FUNCTIONS_PATH} && ls -la
+        working-directory: ./.github/scripts
+        run: cd ${FUNCTIONS_PATH} && ls -R
+
+      - name: Remove branch invalid char
+        shell: bash
+        run: |
+          RENAMED_BRANCH="${BRANCH////$'-'}"
+          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+
+      - name: Check file
+        working-directory: ./.github/scripts/${FUNCTIONS_PATH}
+        run: cat functions-${{ env.RENAMED_BRANCH }}.json
