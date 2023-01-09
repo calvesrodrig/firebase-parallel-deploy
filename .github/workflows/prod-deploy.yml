@@ -16,6 +16,7 @@ env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
   BRANCH: ${{ github.event.pull_request.head.ref }}
   FUNCTIONS_PATH: deploy-functions
+  TEST: ( "0" "1" )
 
 jobs:
   deploy:
@@ -64,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        containers: ${{ env.FUNCTIONS }}
+        functions: ${{ env.TEST }}
     steps:
       - name: Print
         run: echo "works"
