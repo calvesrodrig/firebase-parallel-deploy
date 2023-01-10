@@ -59,7 +59,7 @@ jobs:
           FUNCTIONS=$(echo $(cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json) | sed 's/ //g' )
           echo "::set-output name=functions::$FUNCTIONS"
 
-  example_matrix:
+  deploy:
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
