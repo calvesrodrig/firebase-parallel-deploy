@@ -27,7 +27,7 @@ jobs:
 
       - name: Create functions folder
         working-directory: ./.github/scripts
-        run: mkdir ${FUNCTIONS_PATH}
+        run: mkdir ${{ env.FUNCTIONS_PATH }}
 
       - name: Download branch functions artifact
         working-directory: ./.github/scripts

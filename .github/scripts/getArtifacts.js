@@ -12,7 +12,8 @@ const environment = {
 
 const octokit = new Octokit({auth: environment.token})
 const [owner, repo] = environment.repository.split('/')
-const file = `./${environment.artifactName.replace('/', '-')}.zip`
+const fixedFileName = environment.artifactName.replace('/', '-')
+const file = `./${fixedFileName}.zip`
 
 const EArtifactType = {
     byBranch: 'byBranch',
@@ -29,7 +30,7 @@ const getArtifact = async () => {
         const artifact = findArtifact(environment.artifactType, artifacts)
         if (!artifact) {
             await mkdir(`./${environment.functionsPath}`)
-            await writeFile(`${environment.functionsPath}/${environment.artifactName}.json`, JSON.stringify([]))
+            await writeFile(`${environment.functionsPath}/${fixedFileName}.json`, JSON.stringify([]))
             console.log('Artifact did not exist, new function file was created')
             return
         }
@@ -42,7 +43,13 @@ const getArtifact = async () => {
         const buffer = Buffer.from(download.data);
         await writeFile(file, buffer)
         unzipFile(file)
-        console.log('Unzipped successfully in', process.cwd());
+        console.log('Unzipped successfully in', process.cwd() + `/${environment.functionsPath}`);
+        console.log('fixed file name: ', fixedFileName)
+        console.log('repository: ', environment.repository)
+        console.log('functionsPath: ', environment.functionsPath)
+        console.log('artifactType: ', environment.artifactType)
+        const jsonFile = require(`./${environment.functionsPath}/functions-${fixedFileName}.json`)
+        console.log('file: ', jsonFile)
     } catch(error) {
         console.error(error)
         console.error('artifact name: ', environment.artifactName)
