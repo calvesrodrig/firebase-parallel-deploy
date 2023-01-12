@@ -1,10 +1,10 @@
 const { writeFile } = require('fs/promises')
 const branch = process.env.BRANCH
 const fileName = `functions-${branch}.json`
+const functions = process.env.FUNCTIONS
 
 const getFunctions = () => {
-    console.error('FUNCTIONS: ', process.env.FUNCTIONS)
-    const functions = process.env.FUNCTIONS
+
     const formattedFunctions = functions.map(name => name.replace('\r', ''))
     return JSON.stringify(formattedFunctions)
 }
@@ -14,7 +14,8 @@ const run = async () => {
         const content = getFunctions()
         await writeFile(`./${fileName}`, content)
     } catch (error) {
-        console.error('FUNCTIONS: ', process.env.FUNCTIONS)
+        console.error(error)
+        console.log('functions: ', functions)
     }
 }
 
