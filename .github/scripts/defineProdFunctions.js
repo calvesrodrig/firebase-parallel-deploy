@@ -28,6 +28,7 @@ const run = async () => {
         console.log('Prod functions file wrote successfully')
     } catch (error) {
         console.error(error)
+        process.exit(1)
     }
 }
 
