@@ -56,6 +56,7 @@ const getArtifact = async () => {
         console.error('repository: ', environment.repository)
         console.error('functionsPath: ', environment.functionsPath)
         console.error('artifactType: ', environment.artifactType)
+        process.exit(1)
     }
 }
 

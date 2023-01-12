@@ -20,6 +20,7 @@ const run = async () => {
         console.log('functions: ', functions)
         console.log('branch: ', branch)
         console.log('filename: ', fileName)
+        process.exit(1)
     }
 }
 
