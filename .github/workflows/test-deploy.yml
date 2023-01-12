@@ -113,5 +113,5 @@ jobs:
         env:
           BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json
           HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
-        run: node defineHmgFuntions.js
+        run: node defineHmgFunctions.js
       
