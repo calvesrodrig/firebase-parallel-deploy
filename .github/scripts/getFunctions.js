@@ -5,7 +5,7 @@ const functions = process.env.FUNCTIONS
 
 const getFunctions = () => {
 
-    const formattedFunctions = functions.map(name => name.replace('\r', ''))
+    const formattedFunctions = functions.split('\r')
     return JSON.stringify(formattedFunctions)
 }
 
