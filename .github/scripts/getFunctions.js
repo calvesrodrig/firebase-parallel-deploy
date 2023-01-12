@@ -14,6 +14,7 @@ const run = async () => {
         await writeFile(`./${fileName}`, content)
     } catch (error) {
         console.error(error)
+        console.error(process.env.FUNCTIONS)
     }
 }
 
