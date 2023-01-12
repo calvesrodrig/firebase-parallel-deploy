@@ -52,7 +52,7 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
-    if: fromJson(needs.get_functions.outputs.functions) != [] 
+    # if: fromJson(needs.get_functions.outputs.functions) != [] 
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
@@ -63,7 +63,7 @@ jobs:
         run: echo ${{ matrix.function }}
 
   upload_functions_hmg:
-    if: fromJson(needs.get_functions.outputs.functions) != []
+    # if: fromJson(needs.get_functions.outputs.functions) != []
     runs-on: ubuntu-latest
     needs: [deploy]
     steps:
