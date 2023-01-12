@@ -13,7 +13,6 @@ const run = async () => {
         const content = getFunctions()
         await writeFile(`./${fileName}`, content)
     } catch (error) {
-        console.error(error)
         console.error(process.env.FUNCTIONS)
     }
 }
