@@ -73,9 +73,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Create branch functions json file
+      - name: get homolog functions file
         shell: bash
         working-directory: ./.github/scripts
-        run: |
-          echo ${{ needs.get_functions.outputs.functions }} > branch-functions.json
-          cat branch-functions.json
+        env:
+          BRANCH_FUNCTIONS: ${{ fromJson(needs.get_functions.outputs.functions) }}
+        run: node uploadHomologFunctions.js
