@@ -11,7 +11,7 @@ env:
   
 jobs:
   get_functions:
-    if: ${{ github.event.pull_request.head.ref != '' }} 
+    if: github.event.pull_request.head.ref != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -43,7 +43,7 @@ jobs:
           TOKEN: ${{ secrets.ACCESS_TOKEN }}
           FUNCTIONS_PATH: ${{ env.PROD_FUNCTIONS_FILE }}
           ARTIFACT_TYPE: byName
-        run: node getArtifact.js
+        run: node getArtifacts.js
 
       - name: Define functions to prod deploy
         shell: bash
