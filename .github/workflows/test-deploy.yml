@@ -75,5 +75,5 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         run: |
-          echo ${{ fromJson(needs.get_functions.outputs.functions) }} > branch-functions.json
+          echo ${{ needs.get_functions.outputs.functions }} > branch-functions.json
           cat branch-functions.json
