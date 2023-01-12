@@ -1,0 +1,34 @@
+name: Deploy to Homolog
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homolog
+
+env:
+  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  BRANCH: ${{ github.event.pull_request.head.ref }}
+  FUNCTIONS_PATH: deploy-functions
+
+jobs:
+  deploy_to_homolog:
+    runs-on: ubuntu-latest
+    outputs:
+      functions: ${{ steps.get-functions.outputs.functions }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install script dependencies
+        working-directory: ./.github/scripts
+        run: npm install
+
+      - name: Create functions folder
+        working-directory: ./.github/scripts
+        run: mkdir ${FUNCTIONS_PATH}
+
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          working-directory: ./.github/scripts/${{ env.FUNCTIONS_PATH }}
+          name: functions-log

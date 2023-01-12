@@ -1,11 +1,11 @@
 
-name: Deploy
+name: Deploy to test
 
 on:
   workflow_dispatch:
   pull_request:
     branches:
-      - master
+      - develop
     types: [closed]
 
 env:
@@ -25,27 +25,19 @@ jobs:
         working-directory: ./.github/scripts
         run: npm install
 
-      - name: echo branch
-        shell: bash
-        run: echo ${BRANCH}
-
       - name: Create functions folder
         working-directory: ./.github/scripts
         run: mkdir ${FUNCTIONS_PATH}
 
-      - name: Download artifact
+      - name: Download branch functions artifact
         working-directory: ./.github/scripts
         env:
-          BRANCH: ${{ env.BRANCH }}
+          ARTIFACT_NAME: ${{ env.BRANCH }}
           REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
-          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ARTIFACT_TYPE: byBranch
         run: node getArtifacts.js
-
-      - name: Check folder
-        shell: bash
-        working-directory: ./.github/scripts
-        run: cd ${FUNCTIONS_PATH} && ls -R
 
       - name: Remove branch invalid char
         shell: bash
@@ -60,6 +52,7 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
+    if: ${{ fromJson(needs.get_functions.outputs.functions) != [] }} 
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
@@ -68,3 +61,13 @@ jobs:
     steps:
       - name: Print
         run: echo ${{ matrix.function }}
+
+  upload_functions_hmg:
+    if: ${{ fromJson(needs.get_functions.outputs.functions) != [] }} 
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    steps:
+      - name: Create branch functions json file
+        shell: bash
+        working-directory: ./.github/scripts
+        run: ${{ fromJson(needs.get_functions.outputs.functions) }} > branch-functions.json
