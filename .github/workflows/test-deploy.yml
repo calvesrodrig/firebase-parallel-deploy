@@ -77,5 +77,5 @@ jobs:
         shell: bash
         working-directory: ./.github/scripts
         env:
-          BRANCH_FUNCTIONS: ${{ fromJson(needs.get_functions.outputs.functions) }}
+          BRANCH_FUNCTIONS: ${{ needs.get_functions.outputs.functions }}
         run: node uploadHomologFunctions.js
