@@ -1,12 +1,16 @@
 
 name: Deploy to test
 
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     branches:
+#       - develop
+#     types: [closed]
+
 on:
-  workflow_dispatch:
   pull_request:
-    branches:
-      - develop
-    types: [closed]
+    branches: [develop]
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
@@ -70,4 +74,6 @@ jobs:
       - name: Create branch functions json file
         shell: bash
         working-directory: ./.github/scripts
-        run: ${{ fromJson(needs.get_functions.outputs.functions) }} > branch-functions.json
+        run: |
+          echo ${{ fromJson(needs.get_functions.outputs.functions) }} > branch-functions.json
+          cat branch-functions.json
