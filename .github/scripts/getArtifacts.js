@@ -48,8 +48,6 @@ const getArtifact = async () => {
         console.log('repository: ', environment.repository)
         console.log('functionsPath: ', environment.functionsPath)
         console.log('artifactType: ', environment.artifactType)
-        const jsonFile = require(`./${environment.functionsPath}/functions-${fixedFileName}.json`)
-        console.log('file: ', jsonFile)
     } catch(error) {
         console.error(error)
         console.error('artifact name: ', environment.artifactName)
