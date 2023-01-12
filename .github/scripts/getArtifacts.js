@@ -1,6 +1,6 @@
 const { Octokit } = require('octokit')
 const AdmZip = require("adm-zip");
-const { writeFile, mkdir } = require('fs/promises')
+const { writeFile, mkdir, readdir } = require('fs/promises')
 
 const environment = {
     artifactName: process.env.ARTIFACT_NAME,
@@ -65,7 +65,7 @@ const unzipFile = (fileName) => {
 
 const findArtifact = (type, artifacts) => {
     if (type === EArtifactType.byBranch) {
-        return artifacts.find(art => art.workflow_run.head_branch === environment.artifactName)
+        return artifacts.find(art => art.workflow_run.head_branch === environment.artifactName && art.name.includes(fixedFileName))
     }
     return artifacts.find(art => art.name === environment.artifactName)
 }
