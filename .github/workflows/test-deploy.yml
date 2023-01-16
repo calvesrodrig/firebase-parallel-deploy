@@ -118,3 +118,22 @@ jobs:
           name: ${{ env.HMG_FUNCTIONS_FILE }}
           path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
           retention-days: 7
+
+  delete_branch_functions_artifact:
+    runs-on: ubuntu-latest
+    needs: [upload_functions_hmg]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install script dependencies
+        working-directory: ./.github/scripts
+        run: npm install
+
+      - name: Delete branch functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.BRANCH }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_TYPE: byBranch
+        run: node deleteArtifact.js

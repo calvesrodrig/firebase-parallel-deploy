@@ -27,7 +27,7 @@ jobs:
         working-directory: ./.github/scripts
         run: |
           mkdir ${{ env.FUNCTIONS_PATH }}
-          touch ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
+          echo [] > ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
 
       - name: Download homolog functions artifact
         working-directory: ./.github/scripts
