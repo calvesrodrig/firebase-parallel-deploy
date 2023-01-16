@@ -46,6 +46,12 @@ jobs:
           HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
           OPERATION_TYPE: retrieve
         run: node defineHmgFunctions.js
+      
+      - name: Upload homolog functions artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.HMG_FUNCTIONS_FILE }}
+          path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
 
       - name: Add functions array to output
         id: get-functions
