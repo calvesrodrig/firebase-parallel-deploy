@@ -14,8 +14,8 @@ env:
 jobs:
   deploy_to_homolog:
     runs-on: ubuntu-latest
-    outputs:
-      functions: ${{ steps.get-functions.outputs.functions }}
+    # outputs:
+    #   functions: ${{ steps.get-functions.outputs.functions }}
     steps:
       - uses: actions/checkout@v3
 
