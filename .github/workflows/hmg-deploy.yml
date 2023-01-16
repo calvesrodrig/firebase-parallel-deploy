@@ -8,14 +8,14 @@ on:
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
-  BRANCH: ${{ github.event.pull_request.head.ref }}
+  HMG_FUNCTIONS_FILE: hmg-functions
   FUNCTIONS_PATH: deploy-functions
 
 jobs:
-  deploy_to_homolog:
+  get_functions:
     runs-on: ubuntu-latest
-    # outputs:
-    #   functions: ${{ steps.get-functions.outputs.functions }}
+    outputs:
+      functions: ${{ steps.get-functions.outputs.functions }}
     steps:
       - uses: actions/checkout@v3
 
@@ -23,12 +23,45 @@ jobs:
         working-directory: ./.github/scripts
         run: npm install
 
-      - name: Create functions folder
+      - name: Create deploy functions file
         working-directory: ./.github/scripts
-        run: mkdir ${FUNCTIONS_PATH}
+        run: |
+          mkdir ${{ env.FUNCTIONS_PATH }}
+          touch ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
 
-      - name: Download a single artifact
-        uses: actions/download-artifact@v3
-        with:
-          working-directory: ./.github/scripts/${{ env.FUNCTIONS_PATH }}
-          name: functions-log
+      - name: Download homolog functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FUNCTIONS_PATH: ${{ env.HMG_FUNCTIONS_FILE }}
+          ARTIFACT_TYPE: byName
+        run: node getArtifacts.js
+
+      - name: Define deploy functions
+        working-directory: ./.github/scripts
+        env:
+          BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
+          HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
+          OPERATION_TYPE: retrieve
+        run: node defineHmgFunctions.js
+
+      - name: Add functions array to output
+        id: get-functions
+        run: |
+          FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json) | sed 's/ //g' )
+          echo "::set-output name=functions::$FUNCTIONS"
+
+  deploy:
+    # if: fromJson(needs.get_functions.outputs.functions) != [] 
+    runs-on: ubuntu-latest
+    needs: [get_functions]
+    strategy:
+      matrix:
+        function: ${{ fromJson(needs.get_functions.outputs.functions) }}
+    steps:
+      - name: Print
+        run: echo ${{ matrix.function }}
+
+
