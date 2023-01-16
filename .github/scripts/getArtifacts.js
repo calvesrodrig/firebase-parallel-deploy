@@ -43,7 +43,7 @@ const getArtifact = async () => {
         const buffer = Buffer.from(download.data);
         await writeFile(file, buffer)
         unzipFile(file)
-        console.log('Unzipped successfully in', process.cwd() + `/${environment.functionsPath}`);
+        console.log('Unzipped successfully at', process.cwd() + `/${environment.functionsPath}`);
         console.log('fixed file name: ', fixedFileName)
         console.log('repository: ', environment.repository)
         console.log('functionsPath: ', environment.functionsPath)
