@@ -28,7 +28,7 @@ const deleteArtifact = async () => {
             console.log('Artifact did not exist')
             return
         }
-        await octokit.actions.deleteArtifact({
+        await octokit.rest.actions.deleteArtifact({
             repo,
             owner,
             artifact_id: artifact.id
