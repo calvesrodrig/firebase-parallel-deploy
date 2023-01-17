@@ -57,6 +57,7 @@ jobs:
         id: check-functions
         shell: bash
         working-directory: ./.github/scripts
+        continue-on-error: true
         env:
           FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json
         run: |
