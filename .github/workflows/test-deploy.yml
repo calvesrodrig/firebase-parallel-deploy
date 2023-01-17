@@ -13,6 +13,7 @@ env:
   BRANCH: ${{ github.event.pull_request.head.ref }}
   FUNCTIONS_PATH: deploy-functions
   HMG_FUNCTIONS_FILE: hmg-functions
+  EMPTY_FILE: empty-functions
 
 jobs:
   get_functions:
@@ -47,12 +48,6 @@ jobs:
           RENAMED_BRANCH="${BRANCH////$'-'}"
           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
 
-      - name: Add functions array to output
-        id: get-functions
-        run: |
-          FUNCTIONS=$(echo $(cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json) | sed 's/ //g' )
-          echo "::set-output name=functions::$FUNCTIONS"
-
       - name: Check if there are functions to be deployed
         id: check-functions
         shell: bash
@@ -64,6 +59,17 @@ jobs:
           node checkIfThereAreFunctions.js
           exit_code=$?
           echo "::set-output name=deploy-ready::$exit_code"
+      
+      - name: Create special functions file to not run deploy if there are no functions to be deployed
+        working-directory: ./.github/scripts
+        run: |
+          echo ['"empty-functions"'] > ./${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json
+
+      - name: Add functions array to output
+        id: get-functions
+        run: |
+          if [ ${{ steps.check-functions.outputs.deploy-ready }} -eq 0 ]; then FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json) | sed 's/ //g' ); else FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json) | sed 's/ //g' ); fi
+          echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
     if: needs.check-functions.outputs.deploy-ready == 0
