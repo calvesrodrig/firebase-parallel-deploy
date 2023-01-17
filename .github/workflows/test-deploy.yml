@@ -80,8 +80,7 @@ jobs:
         function: ${{ fromJson(needs.get_functions.outputs.functions) }}
     steps:
       - name: Print
-        run: | 
-          echo ${{ matrix.function }}
+        run: echo ${{ matrix.function }}
 
   upload_functions_hmg:
     runs-on: ubuntu-latest
