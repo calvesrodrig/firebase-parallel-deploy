@@ -1,17 +1,12 @@
 
 name: Deploy to test
 
-# on:
-#   workflow_dispatch:
-#   pull_request:
-#     branches:
-#       - develop
-#     types: [closed]
-
 on:
+  workflow_dispatch:
   pull_request:
-    branches: [develop]
-
+    branches:
+      - develop
+    types: [closed]
 
 env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
@@ -62,6 +57,8 @@ jobs:
         working-directory: ./.github/scripts
         shell: bash
         id: check-functions
+        env:
+          FUNCTIONS_FILE: ./${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json
         run: |
           node checkIfThereAreFunctions.js
           exit_code=$?

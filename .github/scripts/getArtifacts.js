@@ -1,6 +1,6 @@
 const { Octokit } = require('octokit')
 const AdmZip = require("adm-zip");
-const { writeFile, mkdir, readdir } = require('fs/promises')
+const { writeFile, mkdir } = require('fs/promises')
 
 const environment = {
     artifactName: process.env.ARTIFACT_NAME,
