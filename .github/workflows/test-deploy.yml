@@ -63,7 +63,7 @@ jobs:
       - name: Create special functions file to not run deploy if there are no functions to be deployed
         working-directory: ./.github/scripts
         run: |
-          echo ['"empty-functions"'] > ./${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json
+          echo ['"${{ env.EMPTY_FILE }}"'] > ./${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json
 
       - name: Add functions array to output
         id: get-functions
@@ -82,8 +82,6 @@ jobs:
       - name: Print
         run: | 
           echo ${{ matrix.function }}
-          echo ${{ fromJson(needs.get_functions.outputs.functions) }}
-          echo ${{ fromJson(needs.get_functions.outputs.functions)[0] }}
 
   upload_functions_hmg:
     runs-on: ubuntu-latest
