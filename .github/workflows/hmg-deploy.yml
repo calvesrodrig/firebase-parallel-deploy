@@ -1,82 +1,82 @@
-# name: Deploy to Homolog
+name: Deploy to Homolog
 
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - homolog
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homolog
 
-# env:
-#   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
-#   HMG_FUNCTIONS_FILE: hmg-functions
-#   FUNCTIONS_PATH: deploy-functions
+env:
+  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+  HMG_FUNCTIONS_FILE: hmg-functions
+  FUNCTIONS_PATH: deploy-functions
 
-# jobs:
-#   get_functions:
-#     runs-on: ubuntu-latest
-#     outputs:
-#       functions: ${{ steps.get-functions.outputs.functions }}
-#     steps:
-#       - uses: actions/checkout@v3
+jobs:
+  get_functions:
+    runs-on: ubuntu-latest
+    outputs:
+      functions: ${{ steps.get-functions.outputs.functions }}
+    steps:
+      - uses: actions/checkout@v3
 
-#       - name: Install script dependencies
-#         working-directory: ./.github/scripts
-#         run: npm install
+      - name: Install script dependencies
+        working-directory: ./.github/scripts
+        run: npm install
 
-#       - name: Create deploy functions file
-#         working-directory: ./.github/scripts
-#         run: |
-#           mkdir ${{ env.FUNCTIONS_PATH }}
-#           echo [] > ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
+      - name: Create deploy functions file
+        working-directory: ./.github/scripts
+        run: |
+          mkdir ${{ env.FUNCTIONS_PATH }}
+          echo [] > ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
 
-#       - name: Download homolog functions artifact
-#         working-directory: ./.github/scripts
-#         env:
-#           ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
-#           REPOSITORY: ${{ github.repository }}
-#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           FUNCTIONS_PATH: ${{ env.HMG_FUNCTIONS_FILE }}
-#           ARTIFACT_TYPE: byName
-#         run: node getArtifacts.js
+      - name: Download homolog functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FUNCTIONS_PATH: ${{ env.HMG_FUNCTIONS_FILE }}
+          ARTIFACT_TYPE: byName
+        run: node getArtifacts.js
 
-#       - name: Define deploy functions
-#         working-directory: ./.github/scripts
-#         env:
-#           BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
-#           HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
-#           OPERATION_TYPE: retrieve
-#         run: node defineHmgFunctions.js
+      - name: Define deploy functions
+        working-directory: ./.github/scripts
+        env:
+          BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
+          HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
+          OPERATION_TYPE: retrieve
+        run: node defineHmgFunctions.js
 
-#       - name: Delete current homolog functions artifact
-#         working-directory: ./.github/scripts
-#         env:
-#           ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
-#           REPOSITORY: ${{ github.repository }}
-#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#           ARTIFACT_TYPE: byName
-#         run: node deleteArtifact.js
+      - name: Delete current homolog functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_TYPE: byName
+        run: node deleteArtifact.js
       
-#       - name: Upload new homolog functions artifact
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: ${{ env.HMG_FUNCTIONS_FILE }}
-#           path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
+      - name: Upload new homolog functions artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.HMG_FUNCTIONS_FILE }}
+          path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
 
-#       - name: Add functions array to output
-#         id: get-functions
-#         run: |
-#           FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json) | sed 's/ //g' )
-#           echo "::set-output name=functions::$FUNCTIONS"
+      - name: Add functions array to output
+        id: get-functions
+        run: |
+          FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json) | sed 's/ //g' )
+          echo "::set-output name=functions::$FUNCTIONS"
 
-#   deploy:
-#     # if: fromJson(needs.get_functions.outputs.functions) != [] 
-#     runs-on: ubuntu-latest
-#     needs: [get_functions]
-#     strategy:
-#       matrix:
-#         function: ${{ fromJson(needs.get_functions.outputs.functions) }}
-#     steps:
-#       - name: Print
-#         run: echo ${{ matrix.function }}
+  deploy:
+    # if: fromJson(needs.get_functions.outputs.functions) != [] 
+    runs-on: ubuntu-latest
+    needs: [get_functions]
+    strategy:
+      matrix:
+        function: ${{ fromJson(needs.get_functions.outputs.functions) }}
+    steps:
+      - name: Print
+        run: echo ${{ matrix.function }}
 
 
