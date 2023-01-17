@@ -72,7 +72,7 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
-    if: ${{ fromJson(needs.get_functions.outputs.functions)[0] }} != 'empty-functions'
+    if: fromJson(needs.get_functions.outputs.functions)[0] != 'empty-functions'
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
