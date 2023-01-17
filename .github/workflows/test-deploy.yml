@@ -54,11 +54,11 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
       - name: Check if there are functions to be deployed
-        working-directory: ./.github/scripts
-        shell: bash
         id: check-functions
+        shell: bash
+        working-directory: ./.github/scripts
         env:
-          FUNCTIONS_FILE: ./${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json
+          FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json
         run: |
           node checkIfThereAreFunctions.js
           exit_code=$?
