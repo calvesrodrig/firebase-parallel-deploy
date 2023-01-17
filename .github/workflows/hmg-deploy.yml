@@ -46,8 +46,17 @@ jobs:
           HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
           OPERATION_TYPE: retrieve
         run: node defineHmgFunctions.js
+
+      - name: Delete current homolog functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_TYPE: byName
+        run: node deleteArtifact.js
       
-      - name: Upload homolog functions artifact
+      - name: Upload new homolog functions artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.HMG_FUNCTIONS_FILE }}
