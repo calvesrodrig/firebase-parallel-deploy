@@ -22,7 +22,9 @@ jobs:
 
       - name: stop process
         shell: bash
-        run: exit 0
+        run: |
+          echo "Exiting workflow with success"
+          end-with-success
 
       - name: Job should not run
         run: echo "Should not run"
