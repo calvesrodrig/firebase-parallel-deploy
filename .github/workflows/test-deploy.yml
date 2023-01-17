@@ -72,7 +72,7 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
-    if: needs.check-functions.outputs.deploy-ready == "0"
+    if: needs.check-functions.outputs.deploy-ready == '0'
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
