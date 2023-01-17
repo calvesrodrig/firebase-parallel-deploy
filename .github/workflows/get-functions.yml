@@ -60,6 +60,15 @@ jobs:
           path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
           retention-days: 7
 
+      - name: Delete current production functions artifact
+        working-directory: ./.github/scripts
+        env:
+          ARTIFACT_NAME: ${{ env.PROD_FUNCTIONS_FILE }}
+          REPOSITORY: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_TYPE: byName
+        run: node deleteArtifact.js
+
       - name: Upload prod functions file artifact
         uses: actions/upload-artifact@v3
         with:
