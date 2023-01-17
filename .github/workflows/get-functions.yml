@@ -1,78 +1,78 @@
-name: get functions and save in artifacts
+# name: get functions and save in artifacts
 
-on:
-  pull_request:
-    branches: [develop]
+# on:
+#   pull_request:
+#     branches: [develop]
 
-env:
-  BRANCH: ${{ github.event.pull_request.head.ref }}
-  BODY: ${{ github.event.pull_request.body }}
-  PROD_FUNCTIONS_FILE: prod-functions
+# env:
+#   BRANCH: ${{ github.event.pull_request.head.ref }}
+#   BODY: ${{ github.event.pull_request.body }}
+#   PROD_FUNCTIONS_FILE: prod-functions
   
-jobs:
-  get_functions:
-    if: github.event.pull_request.head.ref != ''
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+# jobs:
+#   get_functions:
+#     if: github.event.pull_request.head.ref != ''
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Install script dependencies
-        working-directory: ./.github/scripts
-        run: npm install
+#       - name: Install script dependencies
+#         working-directory: ./.github/scripts
+#         run: npm install
 
-      - name: Remove branch invalid char
-        shell: bash
-        run: |
-          RENAMED_BRANCH="${BRANCH////$'-'}"
-          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+#       - name: Remove branch invalid char
+#         shell: bash
+#         run: |
+#           RENAMED_BRANCH="${BRANCH////$'-'}"
+#           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
           
-      - name: Run get functions script
-        shell: bash
-        working-directory: ./.github/scripts
-        env:
-          BRANCH: ${{ env.RENAMED_BRANCH }}
-          FUNCTIONS: ${{ env.BODY }}
-        run: node getFunctions.js
+#       - name: Run get functions script
+#         shell: bash
+#         working-directory: ./.github/scripts
+#         env:
+#           BRANCH: ${{ env.RENAMED_BRANCH }}
+#           FUNCTIONS: ${{ env.BODY }}
+#         run: node getFunctions.js
 
-      - name: Download prod functions artifact
-        shell: bash
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.PROD_FUNCTIONS_FILE }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          FUNCTIONS_PATH: ${{ env.PROD_FUNCTIONS_FILE }}
-          ARTIFACT_TYPE: byName
-        run: node getArtifacts.js
+#       - name: Download prod functions artifact
+#         shell: bash
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.PROD_FUNCTIONS_FILE }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.ACCESS_TOKEN }}
+#           FUNCTIONS_PATH: ${{ env.PROD_FUNCTIONS_FILE }}
+#           ARTIFACT_TYPE: byName
+#         run: node getArtifacts.js
 
-      - name: Define functions to prod deploy
-        shell: bash
-        working-directory: ./.github/scripts
-        env:
-          BRANCH_FILE: functions-${{ env.RENAMED_BRANCH }}.json
-          PROD_FUNCTIONS_FILE: ${{ env.PROD_FUNCTIONS_FILE }}/${{ env.PROD_FUNCTIONS_FILE }}.json
-        run: node defineProdFunctions.js
+#       - name: Define functions to prod deploy
+#         shell: bash
+#         working-directory: ./.github/scripts
+#         env:
+#           BRANCH_FILE: functions-${{ env.RENAMED_BRANCH }}.json
+#           PROD_FUNCTIONS_FILE: ${{ env.PROD_FUNCTIONS_FILE }}/${{ env.PROD_FUNCTIONS_FILE }}.json
+#         run: node defineProdFunctions.js
 
-      - name: Upload branch functions file artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Artifact-functions-${{ env.RENAMED_BRANCH }}
-          path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
-          retention-days: 7
+#       - name: Upload branch functions file artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: Artifact-functions-${{ env.RENAMED_BRANCH }}
+#           path: ./.github/scripts/functions-${{ env.RENAMED_BRANCH }}.json
+#           retention-days: 7
 
-      - name: Delete current production functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.PROD_FUNCTIONS_FILE }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_TYPE: byName
-        run: node deleteArtifact.js
+#       - name: Delete current production functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.PROD_FUNCTIONS_FILE }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           ARTIFACT_TYPE: byName
+#         run: node deleteArtifact.js
 
-      - name: Upload prod functions file artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.PROD_FUNCTIONS_FILE }}
-          path: ./.github/scripts/${{ env.PROD_FUNCTIONS_FILE }}/${{ env.PROD_FUNCTIONS_FILE }}.json
-          retention-days: 15
+#       - name: Upload prod functions file artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: ${{ env.PROD_FUNCTIONS_FILE }}
+#           path: ./.github/scripts/${{ env.PROD_FUNCTIONS_FILE }}/${{ env.PROD_FUNCTIONS_FILE }}.json
+#           retention-days: 15
         

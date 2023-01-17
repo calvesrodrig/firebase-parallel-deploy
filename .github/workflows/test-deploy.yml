@@ -1,148 +1,148 @@
 
-name: Deploy to test
+# name: Deploy to test
 
-on:
-  workflow_dispatch:
-  pull_request:
-    branches:
-      - develop
-    types: [closed]
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     branches:
+#       - develop
+#     types: [closed]
 
-env:
-  PROJECT: ${{ secrets.PROJECT_ID_TEST }}
-  BRANCH: ${{ github.event.pull_request.head.ref }}
-  FUNCTIONS_PATH: deploy-functions
-  HMG_FUNCTIONS_FILE: hmg-functions
+# env:
+#   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
+#   BRANCH: ${{ github.event.pull_request.head.ref }}
+#   FUNCTIONS_PATH: deploy-functions
+#   HMG_FUNCTIONS_FILE: hmg-functions
 
-jobs:
-  get_functions:
-    runs-on: ubuntu-latest
-    outputs:
-      functions: ${{ steps.get-functions.outputs.functions }}
-    steps:
-      - uses: actions/checkout@v3
+# jobs:
+#   get_functions:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       functions: ${{ steps.get-functions.outputs.functions }}
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Install script dependencies
-        working-directory: ./.github/scripts
-        run: npm install
+#       - name: Install script dependencies
+#         working-directory: ./.github/scripts
+#         run: npm install
 
-      - name: Create functions folder
-        working-directory: ./.github/scripts
-        run: mkdir ${{ env.FUNCTIONS_PATH }}
+#       - name: Create functions folder
+#         working-directory: ./.github/scripts
+#         run: mkdir ${{ env.FUNCTIONS_PATH }}
 
-      - name: Download branch functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.BRANCH }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
-          ARTIFACT_TYPE: byBranch
-        run: node getArtifacts.js
+#       - name: Download branch functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.BRANCH }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
+#           ARTIFACT_TYPE: byBranch
+#         run: node getArtifacts.js
 
-      - name: Remove branch invalid char
-        shell: bash
-        run: |
-          RENAMED_BRANCH="${BRANCH////$'-'}"
-          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+#       - name: Remove branch invalid char
+#         shell: bash
+#         run: |
+#           RENAMED_BRANCH="${BRANCH////$'-'}"
+#           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
 
-      - name: Add functions array to output
-        id: get-functions
-        run: |
-          FUNCTIONS=$(echo $(cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json) | sed 's/ //g' )
-          echo "::set-output name=functions::$FUNCTIONS"
+#       - name: Add functions array to output
+#         id: get-functions
+#         run: |
+#           FUNCTIONS=$(echo $(cat .github/scripts/${FUNCTIONS_PATH}/functions-${{ env.RENAMED_BRANCH }}.json) | sed 's/ //g' )
+#           echo "::set-output name=functions::$FUNCTIONS"
 
-  deploy:
-    # if: fromJson(needs.get_functions.outputs.functions) != [] 
-    runs-on: ubuntu-latest
-    needs: [get_functions]
-    strategy:
-      matrix:
-        function: ${{ fromJson(needs.get_functions.outputs.functions) }}
-    steps:
-      - name: Print
-        run: echo ${{ matrix.function }}
+#   deploy:
+#     # if: fromJson(needs.get_functions.outputs.functions) != [] 
+#     runs-on: ubuntu-latest
+#     needs: [get_functions]
+#     strategy:
+#       matrix:
+#         function: ${{ fromJson(needs.get_functions.outputs.functions) }}
+#     steps:
+#       - name: Print
+#         run: echo ${{ matrix.function }}
 
-  upload_functions_hmg:
-    # if: fromJson(needs.get_functions.outputs.functions) != []
-    runs-on: ubuntu-latest
-    needs: [deploy]
-    steps:
-      - uses: actions/checkout@v3
+#   upload_functions_hmg:
+#     # if: fromJson(needs.get_functions.outputs.functions) != []
+#     runs-on: ubuntu-latest
+#     needs: [deploy]
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Install script dependencies
-        working-directory: ./.github/scripts
-        run: npm install
+#       - name: Install script dependencies
+#         working-directory: ./.github/scripts
+#         run: npm install
 
-      - name: Create functions folder
-        working-directory: ./.github/scripts
-        run: mkdir ${{ env.FUNCTIONS_PATH }}
+#       - name: Create functions folder
+#         working-directory: ./.github/scripts
+#         run: mkdir ${{ env.FUNCTIONS_PATH }}
 
-      - name: Download homolog functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FUNCTIONS_PATH: ${{ env.HMG_FUNCTIONS_FILE }}
-          ARTIFACT_TYPE: byName
-        run: node getArtifacts.js
+#       - name: Download homolog functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           FUNCTIONS_PATH: ${{ env.HMG_FUNCTIONS_FILE }}
+#           ARTIFACT_TYPE: byName
+#         run: node getArtifacts.js
 
-      - name: Download branch functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.BRANCH }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
-          ARTIFACT_TYPE: byBranch
-        run: node getArtifacts.js
+#       - name: Download branch functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.BRANCH }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           FUNCTIONS_PATH: ${{ env.FUNCTIONS_PATH }}
+#           ARTIFACT_TYPE: byBranch
+#         run: node getArtifacts.js
 
-      - name: Remove branch invalid char
-        shell: bash
-        run: |
-          RENAMED_BRANCH="${BRANCH////$'-'}"
-          echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
+#       - name: Remove branch invalid char
+#         shell: bash
+#         run: |
+#           RENAMED_BRANCH="${BRANCH////$'-'}"
+#           echo "RENAMED_BRANCH=$RENAMED_BRANCH" >> $GITHUB_ENV
 
-      - name: Define homolog functions file
-        working-directory: ./.github/scripts
-        env:
-          BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json
-          HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
-          OPERATION_TYPE: add
-        run: node defineHmgFunctions.js
+#       - name: Define homolog functions file
+#         working-directory: ./.github/scripts
+#         env:
+#           BRANCH_FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/functions-${{ env.RENAMED_BRANCH }}.json
+#           HOMOLOG_FUNCTIONS_FILE: ./${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
+#           OPERATION_TYPE: add
+#         run: node defineHmgFunctions.js
 
-      - name: Delete current homolog functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_TYPE: byName
-        run: node deleteArtifact.js
+#       - name: Delete current homolog functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.HMG_FUNCTIONS_FILE }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           ARTIFACT_TYPE: byName
+#         run: node deleteArtifact.js
       
-      - name: Upload homolog functions file artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.HMG_FUNCTIONS_FILE }}
-          path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
-          retention-days: 7
+#       - name: Upload homolog functions file artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: ${{ env.HMG_FUNCTIONS_FILE }}
+#           path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
+#           retention-days: 7
 
-  delete_branch_functions_artifact:
-    runs-on: ubuntu-latest
-    needs: [upload_functions_hmg]
-    steps:
-      - uses: actions/checkout@v3
+#   delete_branch_functions_artifact:
+#     runs-on: ubuntu-latest
+#     needs: [upload_functions_hmg]
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Install script dependencies
-        working-directory: ./.github/scripts
-        run: npm install
+#       - name: Install script dependencies
+#         working-directory: ./.github/scripts
+#         run: npm install
 
-      - name: Delete branch functions artifact
-        working-directory: ./.github/scripts
-        env:
-          ARTIFACT_NAME: ${{ env.BRANCH }}
-          REPOSITORY: ${{ github.repository }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_TYPE: byBranch
-        run: node deleteArtifact.js
+#       - name: Delete branch functions artifact
+#         working-directory: ./.github/scripts
+#         env:
+#           ARTIFACT_NAME: ${{ env.BRANCH }}
+#           REPOSITORY: ${{ github.repository }}
+#           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           ARTIFACT_TYPE: byBranch
+#         run: node deleteArtifact.js
