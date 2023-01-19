@@ -72,14 +72,14 @@ jobs:
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
-    if: fromJson(needs.get_functions.outputs.functions)[0] != 'empty-functions'
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
       matrix:
         function: ${{ fromJson(needs.get_functions.outputs.functions) }}
     steps:
-      - name: Print
+      - name: Deploy
+        if: fromJson(needs.get_functions.outputs.functions)[0] != 'empty-functions'
         run: echo ${{ matrix.function }}
 
   upload_functions_hmg:
