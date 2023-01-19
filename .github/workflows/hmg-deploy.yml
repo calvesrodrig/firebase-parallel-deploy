@@ -10,6 +10,7 @@ env:
   PROJECT: ${{ secrets.PROJECT_ID_TEST }}
   HMG_FUNCTIONS_FILE: hmg-functions
   FUNCTIONS_PATH: deploy-functions
+  EMPTY_FILE: empty-functions
 
 jobs:
   get_functions:
@@ -62,14 +63,31 @@ jobs:
           name: ${{ env.HMG_FUNCTIONS_FILE }}
           path: ./.github/scripts/${{ env.HMG_FUNCTIONS_FILE }}/${{ env.HMG_FUNCTIONS_FILE }}.json
 
+      - name: Check if there are functions to be deployed
+        id: check-functions
+        shell: bash
+        working-directory: ./.github/scripts
+        continue-on-error: true
+        env:
+          FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.RENAMED_BRANCH }}.json
+        run: |
+          node checkIfThereAreFunctions.js
+          exit_code=$?
+          echo "::set-output name=deploy-ready::$exit_code"
+      
+      - name: Create special functions file to not run deploy if there are no functions to be deployed
+        working-directory: ./.github/scripts
+        run: |
+          echo ['"${{ env.EMPTY_FILE }}"'] > ./${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json
+
+      
       - name: Add functions array to output
         id: get-functions
         run: |
-          FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json) | sed 's/ //g' )
+          if [ ${{ steps.check-functions.outputs.deploy-ready }} -eq 0 ]; then FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json) | sed 's/ //g' ); else FUNCTIONS=$(echo $(cat .github/scripts/${{ env.FUNCTIONS_PATH }}/${{ env.EMPTY_FILE }}.json) | sed 's/ //g' ); fi
           echo "::set-output name=functions::$FUNCTIONS"
 
   deploy:
-    # if: fromJson(needs.get_functions.outputs.functions) != [] 
     runs-on: ubuntu-latest
     needs: [get_functions]
     strategy:
@@ -77,6 +95,7 @@ jobs:
         function: ${{ fromJson(needs.get_functions.outputs.functions) }}
     steps:
       - name: Print
+        if: fromJson(needs.get_functions.outputs.functions)[0] != 'empty-functions'
         run: echo ${{ matrix.function }}
 
 
