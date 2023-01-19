@@ -69,7 +69,7 @@ jobs:
         working-directory: ./.github/scripts
         continue-on-error: true
         env:
-          FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.RENAMED_BRANCH }}.json
+          FUNCTIONS_FILE: ./${{ env.FUNCTIONS_PATH }}/${{ env.FUNCTIONS_PATH }}.json
         run: |
           node checkIfThereAreFunctions.js
           exit_code=$?
